@@ -4,7 +4,12 @@
     let todoval="";
     const handleSubmit=()=>{
         console.log(todoval)
+        if(todoval=="")
+        {
+            alert("enter data")
+        }else{
         addTodo(todoval);
+        }
         todoval="";
         console.log("submitting")
     }
