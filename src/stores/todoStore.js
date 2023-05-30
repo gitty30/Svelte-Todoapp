@@ -1,33 +1,50 @@
 import { writable } from "svelte/store";
 
-export const todos = writable([]);
+const isBrowser = typeof window !== "undefined";
+
+const initialTodos =
+  isBrowser && localStorage
+    ? JSON.parse(localStorage.getItem("todos")) || []
+    : [];
+
+export const todos = writable(initialTodos);
 
 export const addTodo = (text) => {
   todos.update((curr) => {
-    const newtodods = [
+    const newtodos = [
       ...curr,
       { text: text, completed: false, id: Date.now() },
     ];
-    return newtodods;
+    if (isBrowser && localStorage) {
+      localStorage.setItem("todos", JSON.stringify(newtodos));
+    }
+    return newtodos;
   });
 };
+
 export const deleteTodo = (id) => {
-  todos.update((todos) => todos.filter((todo) => todo.id != id));
+  todos.update((todos) => {
+    todos = todos.filter((todo) => todo.id != id);
+    if (isBrowser && localStorage) {
+      localStorage.setItem("todos", JSON.stringify(todos));
+    }
+    return todos;
+  });
 };
+
 export const toggleTodoCompleted = (id) => {
   todos.update((todos) => {
-    let index = -1;
+    // let index = -1;
 
-    for (let i = 0; i < todos.length; i++) {
-      if (todos[i].id === id) {
-        index = i;
-        break;
-      }
-    }
+    const index = todos.findIndex((todo) => todo.id === id);
+
     if (index !== -1) {
       todos[index].completed = !todos[index].completed;
     }
     console.log(todos[index].completed);
+    if (isBrowser && localStorage) {
+      localStorage.setItem("todos", JSON.stringify(todos));
+    }
     return todos;
   });
 };
