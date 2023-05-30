@@ -13,11 +13,13 @@ export const addTodo = (text) => {
   todos.update((curr) => {
     const newtodos = [
       ...curr,
-      { text: text, completed: false, id: Date.now() },
+      {
+        text: text,
+        completed: false,
+        id: Date.now(),
+      },
     ];
-    if (isBrowser && localStorage) {
-      localStorage.setItem("todos", JSON.stringify(newtodos));
-    }
+    addtolocalStorage(newtodos);
     return newtodos;
   });
 };
@@ -25,9 +27,7 @@ export const addTodo = (text) => {
 export const deleteTodo = (id) => {
   todos.update((todos) => {
     todos = todos.filter((todo) => todo.id != id);
-    if (isBrowser && localStorage) {
-      localStorage.setItem("todos", JSON.stringify(todos));
-    }
+    addtolocalStorage(todos);
     return todos;
   });
 };
@@ -42,9 +42,13 @@ export const toggleTodoCompleted = (id) => {
       todos[index].completed = !todos[index].completed;
     }
     console.log(todos[index].completed);
-    if (isBrowser && localStorage) {
-      localStorage.setItem("todos", JSON.stringify(todos));
-    }
+    addtolocalStorage(todos);
     return todos;
   });
+};
+
+const addtolocalStorage = (data) => {
+  if (isBrowser && localStorage) {
+    localStorage.setItem("todos", JSON.stringify(data));
+  }
 };
